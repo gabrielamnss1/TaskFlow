@@ -1,3 +1,9 @@
+import hashlib
+
+# Variável global para simular o usuário logado (sessão)
+# Em um sistema real, isso seria gerenciado por sessões web ou tokens
+USUARIO_LOGADO = None
+
 def _hash_senha(senha):
     return hashlib.sha256(senha.encode('utf-8')).hexdigest()
 
