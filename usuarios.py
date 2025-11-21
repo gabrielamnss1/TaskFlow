@@ -56,3 +56,11 @@ def autenticar_usuario(login, senha):
     return None
 def get_usuario_logado():
     return USUARIO_LOGADO
+
+def logout():
+    global USUARIO_LOGADO
+    if USUARIO_LOGADO:
+        print(f"Logout de {USUARIO_LOGADO['nome']} realizado com sucesso.")
+        USUARIO_LOGADO = None
+        return True
+    return False
