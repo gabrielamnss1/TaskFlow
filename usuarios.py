@@ -54,3 +54,5 @@ def autenticar_usuario(login, senha):
             
     print("Erro: Login ou senha inválidos.")
     return None
+def get_usuario_logado():
+    return USUARIO_LOGADO
