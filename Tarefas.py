@@ -304,3 +304,48 @@ def concluir_tarefa(tarefa_id):
         print(f"Tarefa ID {tarefa_id} já está '{STATUS_CONCLUIDA}'.")
         return True
     return False
+
+
+def excluir_tarefa(tarefa_id):
+    """
+    Remove uma tarefa do sistema (DELETE do CRUD).
+    
+    PARÂMETROS:
+        tarefa_id (int): ID da tarefa a ser excluída
+    
+    RETORNO:
+        bool: True se excluiu com sucesso, False se houve erro
+    
+    REGRAS DE SEGURANÇA:
+        - Apenas o responsável pode excluir sua tarefa
+        - Remove permanentemente do arquivo JSON
+        - Operação irreversível
+    
+    VALIDAÇÕES:
+        - Tarefa deve existir
+        - Usuário logado deve ser o responsável
+    
+    ATENÇÃO:
+        Não há confirmação adicional. Uma vez executada, a tarefa
+        é removida permanentemente do sistema.
+    """
+    tarefas = _carregar_tarefas()
+    tarefa = _encontrar_tarefa(tarefas, tarefa_id)
+    usuario = get_usuario_logado()
+
+    if not tarefa:
+        print(f"Erro: Tarefa com ID {tarefa_id} não encontrada.")
+        return False
+        
+    # Permite exclusão apenas se o usuário logado for o responsável
+    if tarefa['responsavel_id'] != usuario['id']: 
+        print("Erro: Você só pode excluir tarefas que você é o responsável.")
+        return False
+
+    tarefas.remove(tarefa) # Remove a tarefa da lista
+    if _salvar_tarefas(tarefas):
+        print(f"Tarefa ID {tarefa_id} excluída com sucesso.")
+        return True
+    return False
+
+# Fim do módulo tarefas.py
