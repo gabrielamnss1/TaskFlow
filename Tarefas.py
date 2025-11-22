@@ -105,3 +105,15 @@ def criar_tarefa(titulo, descricao, prazo_str):
         print("Erro: Formato de prazo inválido. Use DD/MM/AAAA.")
         return False
 
+    tarefas = _carregar_tarefas()
+    
+    nova_tarefa = {
+        'id': len(tarefas) + 1,
+        'titulo': titulo,
+        'descricao': descricao,
+        'responsavel_id': usuario['id'],
+        'responsavel_nome': usuario['nome'],
+        'prazo': prazo,
+        'status': STATUS_PENDENTE,
+        'criacao': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+    }
