@@ -171,3 +171,32 @@ def listar_tarefas(filtrar_por_responsavel=True):
                 pass # Ignora se o formato da data estiver errado
         
         print(f"ID: {t['id']} | Título: {t['titulo']} | Prazo: {t['prazo']} | Status: {status} | Responsável: {t['responsavel_nome']}")
+        
+    return tarefas_filtradas
+
+
+def _encontrar_tarefa(tarefas, tarefa_id):
+    """
+    Função auxiliar para localizar uma tarefa específica pelo ID.
+    
+    PARÂMETROS:
+        tarefas (list): Lista de tarefas onde buscar
+        tarefa_id: ID da tarefa (será convertido para int)
+    
+    RETORNO:
+        dict: Dicionário da tarefa encontrada
+        None: Se não encontrar ou se o ID for inválido
+    
+    USO:
+        Centraliza a lógica de busca para evitar repetição de código
+        nas funções de editar, concluir e excluir.
+    """
+    try:
+        tarefa_id = int(tarefa_id)
+    except ValueError:
+        return None
+        
+    for t in tarefas:
+        if t['id'] == tarefa_id:
+            return t
+    return None
