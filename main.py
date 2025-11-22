@@ -54,3 +54,19 @@ def tela_criar_tarefa():
     prazo = input("Prazo (DD/MM/AAAA): ")
     
     criar_tarefa(titulo, descricao, prazo)
+    
+def tela_editar_tarefa():
+    listar_tarefas()
+    print("\n--- Editar Tarefa ---")
+    try:
+        tarefa_id = int(input("ID da tarefa a editar: "))
+    except ValueError:
+        print("ID inválido.")
+        return
+        
+    print("Deixe em branco para não alterar o campo.")
+    novo_titulo = input("Novo Título: ") or None
+    nova_descricao = input("Nova Descrição: ") or None
+    novo_prazo = input("Novo Prazo (DD/MM/AAAA): ") or None
+    
+    editar_tarefa(tarefa_id, novo_titulo, nova_descricao, novo_prazo)
