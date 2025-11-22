@@ -1,10 +1,63 @@
+"""
+================================================================================
+MÓDULO: main.py - CONTROLADOR PRINCIPAL DO SISTEMA
+================================================================================
+DESCRIÇÃO:
+    Arquivo principal do TaskFlow. Controla o fluxo da aplicação e
+    gerencia a interface de linha de comando (CLI) do sistema.
+
+RESPONSABILIDADES:
+    - Exibir menus de navegação (pré-login e pós-login)
+    - Coordenar chamadas aos módulos especializados
+    - Controlar o loop principal da aplicação
+    - Gerenciar tratamento de erros global
+    - Orquestrar a experiência do usuário
+
+FLUXO DA APLICAÇÃO:
+    1. Menu Principal (não logado):
+       - Login
+       - Cadastro de novo usuário
+       - Sair
+    
+    2. Menu Logado (após autenticação):
+       - Visualizar tarefas
+       - Criar/Editar/Concluir/Excluir tarefas
+       - Gerar relatórios
+       - Logout
+
+ARQUITETURA:
+    Este módulo segue o padrão MVC simplificado:
+    - View: Funções tela_* (interação com usuário)
+    - Controller: menu_* e loop_principal (controle de fluxo)
+    - Model: Módulos importados (usuarios, tarefas, relatorios)
+
+IMPORTANTE PARA APRESENTAÇÃO:
+    Este é o "maestro" do sistema, que coordena todos os outros
+    módulos. Demonstra separação de responsabilidades e organização.
+================================================================================
+"""
+
 import sys
 from usuarios import cadastrar_usuario, autenticar_usuario, logout, get_usuario_logado
+from tarefas import criar_tarefa, listar_tarefas, editar_tarefa, concluir_tarefa, excluir_tarefa
+from relatorios import tarefas_concluidas, tarefas_pendentes, tarefas_atrasadas, exibir_relatorio, exportar_relatorio
+
 # Variável global para controle do loop principal
 EXECUTANDO = True
 
 
 def menu_principal():
+    """
+    Exibe o menu principal para usuários NÃO autenticados.
+    
+    OPÇÕES:
+        1. Login - Acessar o sistema
+        2. Cadastrar Novo Usuário - Criar conta
+        3. Sair - Encerrar aplicação
+    
+    RETORNO:
+        str: Opção escolhida pelo usuário
+    """
     print("\n--- TaskFlow - Gerenciador de Tarefas ---")
     print("1. Login")
     print("2. Cadastrar Novo Usuário")
@@ -14,6 +67,25 @@ def menu_principal():
     return escolha
 
 def menu_logado():
+    """
+    Exibe o menu para usuários AUTENTICADOS.
+    
+    PERSONALIZAÇÃO:
+        - Mostra nome do usuário logado no cabeçalho
+        - Opções específicas para gerenciar tarefas pessoais
+    
+    OPÇÕES:
+        1. Minhas Tarefas - Listar tarefas do usuário
+        2. Criar Nova Tarefa - Adicionar tarefa
+        3. Editar Tarefa - Modificar informações
+        4. Concluir Tarefa - Marcar como finalizada
+        5. Excluir Tarefa - Remover tarefa
+        6. Relatórios - Visualizar análises
+        7. Logout - Sair da conta
+    
+    RETORNO:
+        str: Opção escolhida pelo usuário
+    """
     usuario = get_usuario_logado()
     if not usuario:
         return # Não deveria acontecer
@@ -30,7 +102,20 @@ def menu_logado():
     escolha = input("Escolha uma opção: ")
     return escolha
 
+
 def tela_cadastro():
+    """
+    Interface para cadastro de novo usuário.
+    
+    COLETA DE DADOS:
+        - Nome completo
+        - E-mail
+        - Login (único no sistema)
+        - Senha (será criptografada)
+    
+    DELEGAÇÃO:
+        Chama a função cadastrar_usuario() do módulo usuarios.py
+    """
     print("\n--- Cadastro de Novo Usuário ---")
     nome = input("Nome completo: ")
     email = input("E-mail: ")
@@ -39,23 +124,60 @@ def tela_cadastro():
     
     if cadastrar_usuario(nome, email, login, senha):
         print("Cadastro realizado. Você pode fazer login agora.")
-        
+
 def tela_login():
+    """
+    Interface para login no sistema.
+    
+    COLETA DE DADOS:
+        - Login
+        - Senha
+    
+    DELEGAÇÃO:
+        Chama a função autenticar_usuario() do módulo usuarios.py
+        Se autenticado com sucesso, o usuário fica logado
+    """
     print("\n--- Login ---")
     login = input("Login: ")
     senha = input("Senha: ")
     
     autenticar_usuario(login, senha)
-    
+
+
 def tela_criar_tarefa():
+    """
+    Interface para criar uma nova tarefa.
+    
+    COLETA DE DADOS:
+        - Título da tarefa
+        - Descrição detalhada
+        - Prazo (formato DD/MM/AAAA)
+    
+    DELEGAÇÃO:
+        Chama a função criar_tarefa() do módulo tarefas.py
+        O responsável é automaticamente o usuário logado
+    """
     print("\n--- Criar Nova Tarefa ---")
     titulo = input("Título da Tarefa: ")
     descricao = input("Descrição: ")
     prazo = input("Prazo (DD/MM/AAAA): ")
     
     criar_tarefa(titulo, descricao, prazo)
-    
+
 def tela_editar_tarefa():
+    """
+    Interface para editar uma tarefa existente.
+    
+    PROCESSO:
+        1. Lista tarefas do usuário
+        2. Solicita ID da tarefa a editar
+        3. Coleta novos valores (campos em branco não são alterados)
+        4. Delega para editar_tarefa() do módulo tarefas.py
+    
+    VALIDAÇÃO:
+        - ID deve ser numérico
+        - Campos vazios mantêm valor original
+    """
     listar_tarefas()
     print("\n--- Editar Tarefa ---")
     try:
@@ -72,6 +194,17 @@ def tela_editar_tarefa():
     editar_tarefa(tarefa_id, novo_titulo, nova_descricao, novo_prazo)
 
 def tela_concluir_tarefa():
+    """
+    Interface para marcar uma tarefa como concluída.
+    
+    PROCESSO:
+        1. Lista tarefas do usuário
+        2. Solicita ID da tarefa
+        3. Delega para concluir_tarefa() do módulo tarefas.py
+    
+    VALIDAÇÃO:
+        - ID deve ser numérico
+    """
     listar_tarefas()
     print("\n--- Concluir Tarefa ---")
     try:
@@ -83,6 +216,20 @@ def tela_concluir_tarefa():
     concluir_tarefa(tarefa_id)
 
 def tela_excluir_tarefa():
+    """
+    Interface para excluir uma tarefa.
+    
+    PROCESSO:
+        1. Lista tarefas do usuário
+        2. Solicita ID da tarefa
+        3. Delega para excluir_tarefa() do módulo tarefas.py
+    
+    VALIDAÇÃO:
+        - ID deve ser numérico
+    
+    ATENÇÃO:
+        Exclusão é permanente (não há confirmação adicional)
+    """
     listar_tarefas()
     print("\n--- Excluir Tarefa ---")
     try:
@@ -90,10 +237,28 @@ def tela_excluir_tarefa():
     except ValueError:
         print("ID inválido.")
         return
-    
+        
     excluir_tarefa(tarefa_id)
 
+
 def tela_relatorios():
+    """
+    Interface para geração e exportação de relatórios.
+    
+    TIPOS DE RELATÓRIOS DISPONÍVEIS:
+        1. Tarefas Concluídas - Histórico de produtividade
+        2. Tarefas Pendentes - Trabalho a fazer
+        3. Tarefas Atrasadas - Urgências e alertas
+    
+    FUNCIONALIDADES:
+        - Exibição no console
+        - Opção de exportar para arquivo TXT
+    
+    DELEGAÇÃO:
+        Usa funções do módulo relatorios.py:
+        - tarefas_concluidas(), tarefas_pendentes(), tarefas_atrasadas()
+        - exibir_relatorio(), exportar_relatorio()
+    """
     print("\n--- Relatórios ---")
     print("1. Tarefas Concluídas")
     print("2. Tarefas Pendentes")
@@ -122,7 +287,37 @@ def tela_relatorios():
         if exportar == 's':
             exportar_relatorio(f"Relatório de {escolha}", lista)
 
+
 def loop_principal():
+    """
+    LOOP PRINCIPAL DA APLICAÇÃO - CORAÇÃO DO SISTEMA
+    
+    FUNCIONAMENTO:
+        Executa continuamente até o usuário escolher sair.
+        Alterna entre dois estados:
+        
+        1. ESTADO NÃO LOGADO:
+           - Exibe menu_principal()
+           - Permite: Login, Cadastro ou Sair
+        
+        2. ESTADO LOGADO:
+           - Exibe menu_logado()
+           - Permite: Gerenciar tarefas e relatórios
+    
+    CONTROLE DE FLUXO:
+        - Usa variável global EXECUTANDO para controlar o loop
+        - Verifica estado de autenticação com get_usuario_logado()
+        - Direciona para opção escolhida via estrutura if/elif
+    
+    TRATAMENTO DE ERROS:
+        - Try/except global protege contra crashes
+        - Erros são exibidos mas não encerram o programa
+        - Usuário pode continuar usando após erro
+    
+    IMPORTANTE PARA APRESENTAÇÃO:
+        Este padrão de "event loop" é comum em aplicações interativas.
+        Similar ao que frameworks web fazem em maior escala.
+    """
     global EXECUTANDO
     
     while EXECUTANDO:
@@ -162,6 +357,21 @@ def loop_principal():
             print(f"\n--- ERRO GLOBAL ---")
             print(f"Ocorreu um erro inesperado: {e}")
             print("O sistema continuará rodando. Por favor, tente novamente.")
+
             
 if __name__ == "__main__":
+    """
+    PONTO DE ENTRADA DO PROGRAMA
+    
+    EXPLICAÇÃO:
+        Esta condição verifica se o arquivo está sendo executado diretamente
+        (não importado como módulo).
+        
+        - Se executado: python main.py → loop_principal() é chamado
+        - Se importado: import main → loop_principal() NÃO é chamado
+    
+    BOA PRÁTICA:
+        Permite que o código seja reutilizável e testável, pois pode
+        ser importado sem executar automaticamente.
+    """
     loop_principal()
