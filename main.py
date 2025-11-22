@@ -121,3 +121,44 @@ def tela_relatorios():
         exportar = input("Deseja exportar este relatório para um arquivo TXT? (s/n): ").lower()
         if exportar == 's':
             exportar_relatorio(f"Relatório de {escolha}", lista)
+
+def loop_principal():
+    global EXECUTANDO
+    
+    while EXECUTANDO:
+        try:
+            if get_usuario_logado():
+                escolha = menu_logado()
+                
+                if escolha == '1':
+                    listar_tarefas()
+                elif escolha == '2':
+                    tela_criar_tarefa()
+                elif escolha == '3':
+                    tela_editar_tarefa()
+                elif escolha == '4':
+                    tela_concluir_tarefa()
+                elif escolha == '5':
+                    tela_excluir_tarefa()
+                elif escolha == '6':
+                    tela_relatorios()
+                elif escolha == '7':
+                    logout()
+                else:
+                    print("Opção inválida. Tente novamente.")
+            else:
+                escolha = menu_principal()
+                
+                if escolha == '1':
+                    tela_login()
+                elif escolha == '2':
+                    tela_cadastro()
+                elif escolha == '3':
+                    print("Saindo do TaskFlow. Até mais!")
+                    EXECUTANDO = False
+                else:
+                    print("Opção inválida. Tente novamente.")
+        except Exception as e:
+            print(f"\n--- ERRO GLOBAL ---")
+            print(f"Ocorreu um erro inesperado: {e}")
+            print("O sistema continuará rodando. Por favor, tente novamente.")
