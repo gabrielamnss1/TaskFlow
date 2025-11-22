@@ -162,3 +162,6 @@ def loop_principal():
             print(f"\n--- ERRO GLOBAL ---")
             print(f"Ocorreu um erro inesperado: {e}")
             print("O sistema continuará rodando. Por favor, tente novamente.")
+            
+if __name__ == "__main__":
+    loop_principal()
