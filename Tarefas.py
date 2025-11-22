@@ -117,3 +117,34 @@ def criar_tarefa(titulo, descricao, prazo_str):
         'status': STATUS_PENDENTE,
         'criacao': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
     }
+    
+    tarefas.append(nova_tarefa)
+    if _salvar_tarefas(tarefas):
+        print(f"Tarefa '{titulo}' criada com sucesso! ID: {nova_tarefa['id']}")
+        return True
+    return False
+
+
+def listar_tarefas(filtrar_por_responsavel=True):
+    """
+    Lista tarefas do sistema (READ do CRUD).
+    
+    PARÂMETROS:
+        filtrar_por_responsavel (bool): Se True, mostra apenas tarefas do usuário logado
+                                       Se False, mostra todas as tarefas
+    
+    RETORNO:
+        list: Lista de tarefas filtradas
+    
+    FUNCIONALIDADES:
+        - Filtragem por responsável (cada usuário vê suas tarefas)
+        - Detecção automática de tarefas atrasadas
+        - Exibição formatada com ID, título, prazo, status e responsável
+    
+    LÓGICA DE STATUS ATRASADA:
+        - Verifica se o prazo já passou (comparado com data atual)
+        - Altera o status visualmente (não modifica o arquivo)
+        - Apenas tarefas "Pendente" podem aparecer como "Atrasada"
+    """
+    tarefas = _carregar_tarefas()
+    usuario = get_usuario_logado()
