@@ -117,3 +117,57 @@ def criar_tarefa(titulo, descricao, prazo_str):
         'status': STATUS_PENDENTE,
         'criacao': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
     }
+    
+    tarefas.append(nova_tarefa)
+    if _salvar_tarefas(tarefas):
+        print(f"Tarefa '{titulo}' criada com sucesso! ID: {nova_tarefa['id']}")
+        return True
+    return False
+
+
+def listar_tarefas(filtrar_por_responsavel=True):
+    """
+    Lista tarefas do sistema (READ do CRUD).
+    
+    PARÂMETROS:
+        filtrar_por_responsavel (bool): Se True, mostra apenas tarefas do usuário logado
+                                       Se False, mostra todas as tarefas
+    
+    RETORNO:
+        list: Lista de tarefas filtradas
+    
+    FUNCIONALIDADES:
+        - Filtragem por responsável (cada usuário vê suas tarefas)
+        - Detecção automática de tarefas atrasadas
+        - Exibição formatada com ID, título, prazo, status e responsável
+    
+    LÓGICA DE STATUS ATRASADA:
+        - Verifica se o prazo já passou (comparado com data atual)
+        - Altera o status visualmente (não modifica o arquivo)
+        - Apenas tarefas "Pendente" podem aparecer como "Atrasada"
+    """
+    tarefas = _carregar_tarefas()
+    usuario = get_usuario_logado()
+    
+    if filtrar_por_responsavel and usuario:
+        tarefas_filtradas = [t for t in tarefas if t['responsavel_id'] == usuario['id']]
+    else:
+        tarefas_filtradas = tarefas
+        
+    if not tarefas_filtradas:
+        print("Nenhuma tarefa encontrada.")
+        return []
+        
+    print("\n--- Lista de Tarefas ---")
+    for t in tarefas_filtradas:
+        # Verifica se a tarefa está atrasada
+        status = t['status']
+        if status == STATUS_PENDENTE:
+            try:
+                prazo_dt = datetime.strptime(t['prazo'], '%d/%m/%Y')
+                if prazo_dt < datetime.now().replace(hour=0, minute=0, second=0, microsecond=0):
+                    status = STATUS_ATRASADA
+            except ValueError:
+                pass # Ignora se o formato da data estiver errado
+        
+        print(f"ID: {t['id']} | Título: {t['titulo']} | Prazo: {t['prazo']} | Status: {status} | Responsável: {t['responsavel_nome']}")
