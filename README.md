@@ -137,7 +137,7 @@ Funções Principais:
 - listar_tarefas(filtrar_por_responsavel=True) - Lista tarefas com filtro opcional
   * Detecta automaticamente tarefas atrasadas comparando prazo com data atual
   * Mostra status visual dinamicamente sem alterar o arquivo
-- editar_tarefa(tarefa_id, novo_titulo, nova_descricao, novo_prazo) - Modifica tarefa existente
+- editar_tarefa(tarefa_id, novo_titulo, nova_descricao, novo_prazo) - Modifica tarefa existente com controle de acesso
 - concluir_tarefa(tarefa_id) - Marca tarefa como concluída
 - excluir_tarefa(tarefa_id) - Remove tarefa permanentemente
 
@@ -158,6 +158,12 @@ Regras de Negócio:
 - Cada tarefa registra automaticamente a hora de criação
 - Tarefas atrasadas são detectadas em tempo real (sem modificar o JSON)
 
+Controle de Acesso e Segurança (Novo):
+- Apenas o responsável pela tarefa pode editá-la, concluí-la ou excluí-la
+- Validações de permissão impedem acesso não autorizado
+- Campos opcionais em edição permitem modificações parciais
+- Confirmação de sucesso com mensagens claras ao usuário
+
 ---
 
 ### relatorios.py - Geração de Relatórios
@@ -177,7 +183,7 @@ Funcionalidades:
 - Exportação com timestamp para arquivo TXT
 - Cada usuário vê apenas suas próprias tarefas nos relatórios
 
-NOTA: As funções de relatório estão sendo chamadas a partir do main.py. Um módulo relatorios.py separado pode ser criado futuramente para melhor separação de responsabilidades.
+__NOTA__: As funções de relatório estão sendo implementadas atualmente. O módulo `relatorio.py` contém a estrutura base com documentação completa, e as funções serão desenvolvidas em breve para integração total com o sistema.
 
 ---
 
@@ -453,6 +459,13 @@ Todos os integrantes contribuem para:
 - Sistema de relatórios (Concluídas, Pendentes, Atrasadas)
 - Detecção automática de tarefas atrasadas
 - Documentação completa do projeto
+
+### Atualizações Recentes (Última Versão)
+- **Funções CRUD Expandidas**: Implementação completa de `editar_tarefa()`, `concluir_tarefa()` e `excluir_tarefa()` em `Tarefas.py`
+- **Controle de Acesso**: Validação de segurança assegurando que apenas o responsável pela tarefa pode editá-la, concluí-la ou excluí-la
+- **Arquivo de Relatórios**: Criação de `relatorio.py` com estrutura pronta para implementação de funções de geração de relatórios
+- **Tabela de Integrantes Atualizada**: Adição de coluna de email para melhor contato com todos os membros da equipe
+- **Documentação Aprimorada**: Melhoria nas responsabilidades e informações de contato de cada membro do projeto
 
 ---
 
