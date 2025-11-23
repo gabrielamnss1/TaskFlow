@@ -91,3 +91,35 @@ def tarefas_concluidas():
         - Análise de desempenho
     """
     return _filtrar_tarefas(STATUS_CONCLUIDA)
+
+def tarefas_pendentes():
+    """
+    Retorna todas as tarefas com status 'Pendente'.
+    
+    RETORNO:
+        list: Lista de tarefas pendentes (não atrasadas)
+    
+    USO:
+        - Visualizar trabalho a fazer
+        - Planejamento de atividades
+        - Gestão de prioridades
+    """
+    return _filtrar_tarefas(STATUS_PENDENTE)
+
+def tarefas_atrasadas():
+    """
+    Retorna tarefas pendentes cujo prazo já venceu.
+    
+    RETORNO:
+        list: Lista de tarefas atrasadas
+    
+    CRITÉRIO:
+        - Status = "Pendente"
+        - Prazo < Data atual
+    
+    USO:
+        - Identificar urgências
+        - Alertas de atraso
+        - Priorização de tarefas críticas
+    """
+    return _filtrar_tarefas(verificar_atraso=True)
