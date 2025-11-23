@@ -123,3 +123,75 @@ def tarefas_atrasadas():
         - Priorização de tarefas críticas
     """
     return _filtrar_tarefas(verificar_atraso=True)
+
+
+def exibir_relatorio(titulo, lista_tarefas):
+    """
+    Exibe um relatório formatado no console.
+    
+    PARÂMETROS:
+        titulo (str): Título do relatório
+        lista_tarefas (list): Lista de tarefas a exibir
+    
+    FORMATAÇÃO:
+        - Cabeçalho com título
+        - Cada tarefa em uma linha formatada
+        - Rodapé com contagem total
+    """
+    print(f"\n--- {titulo} ---")
+    
+    if not lista_tarefas:
+        print("Nenhuma tarefa encontrada.")
+        return
+    
+    for tarefa in lista_tarefas:
+        print(f"ID: {tarefa['id']} | Título: {tarefa['titulo']} | "
+              f"Prazo: {tarefa['prazo']} | Status: {tarefa['status']} | "
+              f"Responsável: {tarefa['responsavel_nome']}")
+    
+    print(f"\nTotal: {len(lista_tarefas)} tarefa(s)")
+
+
+def exportar_relatorio(titulo, lista_tarefas):
+    """
+    Exporta um relatório para arquivo TXT.
+    
+    PARÂMETROS:
+        titulo (str): Título do relatório
+        lista_tarefas (list): Lista de tarefas a exportar
+    
+    FORMATO:
+        - Nome: relatorio_<timestamp>.txt
+        - Encoding: UTF-8
+        - Localização: raiz do projeto
+    """
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    nome_arquivo = f"relatorio_{timestamp}.txt"
+    
+    try:
+        with open(nome_arquivo, 'w', encoding='utf-8') as f:
+            f.write(f"{titulo}\n")
+            f.write("=" * 80 + "\n")
+            f.write(f"Gerado em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
+            f.write("=" * 80 + "\n\n")
+            
+            if not lista_tarefas:
+                f.write("Nenhuma tarefa encontrada.\n")
+            else:
+                for tarefa in lista_tarefas:
+                    f.write(f"ID: {tarefa['id']}\n")
+                    f.write(f"Título: {tarefa['titulo']}\n")
+                    f.write(f"Descrição: {tarefa['descricao']}\n")
+                    f.write(f"Prazo: {tarefa['prazo']}\n")
+                    f.write(f"Status: {tarefa['status']}\n")
+                    f.write(f"Responsável: {tarefa['responsavel_nome']}\n")
+                    f.write(f"Criado em: {tarefa['criacao']}\n")
+                    f.write("-" * 80 + "\n\n")
+                
+                f.write(f"Total de tarefas: {len(lista_tarefas)}\n")
+        
+        print(f"✓ Relatório exportado para: {nome_arquivo}")
+        return True
+    except Exception as e:
+        print(f"✗ Erro ao exportar relatório: {e}")
+        return False
