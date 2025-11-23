@@ -31,7 +31,7 @@ IMPORTANTE PARA APRESENTAÇÃO:
 """
 
 from datetime import datetime
-from tarefas import _carregar_tarefas, STATUS_CONCLUIDA, STATUS_PENDENTE, STATUS_ATRASADA
+from Tarefas import _carregar_tarefas, STATUS_CONCLUIDA, STATUS_PENDENTE, STATUS_ATRASADA
 from usuarios import get_usuario_por_id
 
 
@@ -123,3 +123,103 @@ def tarefas_atrasadas():
         - Priorização de tarefas críticas
     """
     return _filtrar_tarefas(verificar_atraso=True)
+
+
+def _formatar_relatorio(titulo, lista_tarefas):
+    """
+    Formata uma lista de tarefas para exibição ou exportação.
+    
+    PARÂMETROS:
+        titulo (str): Título do relatório
+        lista_tarefas (list): Lista de tarefas a formatar
+    
+    RETORNO:
+        str: Relatório formatado em texto, pronto para exibir ou salvar
+    
+    FORMATAÇÃO:
+        - Cabeçalho com título do relatório
+        - Cada tarefa com todos os detalhes
+        - Separadores visuais entre tarefas
+        - Mensagem específica se não houver tarefas
+    
+    INFORMAÇÕES INCLUÍDAS:
+        - ID da tarefa
+        - Título e descrição
+        - Prazo
+        - Status
+        - Nome do responsável (buscado por ID)
+    """
+    if not lista_tarefas:
+        return f"--- {titulo} ---\nNenhuma tarefa encontrada."
+
+    relatorio = [f"--- {titulo} ---"]
+    for t in lista_tarefas:
+        responsavel = get_usuario_por_id(t['responsavel_id'])
+        nome_responsavel = responsavel['nome'] if responsavel else "Desconhecido"
+        
+        relatorio.append(f"ID: {t['id']}")
+        relatorio.append(f"Título: {t['titulo']}")
+        relatorio.append(f"Descrição: {t['descricao']}")
+        relatorio.append(f"Prazo: {t['prazo']}")
+        relatorio.append(f"Status: {t['status']}")
+        relatorio.append(f"Responsável: {nome_responsavel}")
+        relatorio.append("-" * 20)
+        
+    return "\n".join(relatorio)
+
+
+def exibir_relatorio(tipo, lista_tarefas):
+    """
+    Exibe um relatório formatado no console.
+    
+    PARÂMETROS:
+        tipo (str): Nome/tipo do relatório (ex: "Tarefas Concluídas")
+        lista_tarefas (list): Lista de tarefas a exibir
+    
+    EFEITO:
+        Imprime o relatório formatado na tela
+    
+    USO:
+        Visualização rápida de relatórios sem necessidade de arquivo
+    """
+    relatorio_formatado = _formatar_relatorio(tipo, lista_tarefas)
+    print("\n" + relatorio_formatado)
+
+def exportar_relatorio(tipo, lista_tarefas):
+    """
+    Salva um relatório em arquivo de texto (.txt).
+    
+    PARÂMETROS:
+        tipo (str): Nome/tipo do relatório (usado no nome do arquivo)
+        lista_tarefas (list): Lista de tarefas a exportar
+    
+    RETORNO:
+        str: Nome do arquivo criado se sucesso
+        None: Se houver erro na exportação
+    
+    NOME DO ARQUIVO:
+        Formato: relatorio_[tipo]_[data]_[hora].txt
+        Exemplo: relatorio_tarefas_concluídas_20251113_143022.txt
+    
+    CARACTERÍSTICAS:
+        - Encoding UTF-8 (suporta acentos)
+        - Timestamp no nome (evita sobrescrever arquivos)
+        - Conteúdo idêntico ao exibido no console
+    
+    USO:
+        - Documentação de progresso
+        - Compartilhamento de informações
+        - Arquivamento de histórico
+    """
+    relatorio_formatado = _formatar_relatorio(tipo, lista_tarefas)
+    nome_arquivo = f"relatorio_{tipo.lower().replace(' ', '_')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    
+    try:
+        with open(nome_arquivo, 'w', encoding='utf-8') as f:
+            f.write(relatorio_formatado)
+        print(f"\nRelatório '{tipo}' exportado com sucesso para o arquivo: {nome_arquivo}")
+        return nome_arquivo
+    except Exception as e:
+        print(f"Erro ao exportar relatório: {e}")
+        return None
+# Fim do módulo relatorios.py
