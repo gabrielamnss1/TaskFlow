@@ -30,3 +30,14 @@ def ler_dados(caminho_arquivo):
     except json.JSONDecodeError:
         # Retorna uma lista vazia se o arquivo estiver corrompido ou vazio
         return []
+    
+def salvar_dados(caminho_arquivo, dados):
+    garantir_diretorio(caminho_arquivo)
+    try:
+        with open(caminho_arquivo, 'w', encoding='utf-8') as f:
+            # ensure_ascii=False para permitir caracteres UTF-8 no JSON
+            json.dump(dados, f, indent=4, ensure_ascii=False)
+        return True
+    except Exception as e:
+        print(f"Erro ao salvar dados em {caminho_arquivo}: {e}")
+        return False
