@@ -86,7 +86,7 @@ def criar_tarefa(titulo, descricao, prazo_str):
     ESTRUTURA DA TAREFA:
         - id: Identificador único
         - titulo: Nome da tarefa
-        - descricao: Detalhes
+        - descrição: Detalhes
         - responsavel_id: ID do usuário que criou
         - responsavel_nome: Nome do usuário (facilitação)
         - prazo: Data limite (DD/MM/AAAA)
@@ -110,7 +110,7 @@ def criar_tarefa(titulo, descricao, prazo_str):
     nova_tarefa = {
         'id': len(tarefas) + 1,
         'titulo': titulo,
-        'descricao': descricao,
+        'descrição': descricao,
         'responsavel_id': usuario['id'],
         'responsavel_nome': usuario['nome'],
         'prazo': prazo,
@@ -243,7 +243,7 @@ def editar_tarefa(tarefa_id, novo_titulo=None, nova_descricao=None, novo_prazo_s
         tarefa['titulo'] = novo_titulo
         modificado = True
     if nova_descricao:
-        tarefa['descricao'] = nova_descricao
+        tarefa['descrição'] = nova_descricao
         modificado = True
     if novo_prazo_str:
         try:

@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Perfil - TaskFlow{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-user-circle"></i> Meu Perfil</h1>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <div class="profile-container">
+        <!-- Card de Informações -->
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            
+            <h2>{{ usuario.nome }}</h2>
+            <p class="profile-login">@{{ usuario.login }}</p>
+            
+            <div class="profile-info">
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>{{ usuario.email }}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-key"></i>
+                    <span>••••••••</span>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary btn-block" onclick="openEditModal()">
+                <i class="fas fa-edit"></i> Editar Perfil
+            </button>
+        </div>
+
+        <!-- Estatísticas do Usuário -->
+        <div class="profile-stats">
+            <h3><i class="fas fa-chart-line"></i> Minhas Estatísticas</h3>
+            
+            <div class="stats-list">
+                <div class="stat-item">
+                    <div class="stat-icon stat-total-bg">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total de Tarefas</h4>
+                        <p id="statTotal">-</p>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-icon stat-success-bg">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Concluídas</h4>
+                        <p id="statConcluidas">-</p>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-icon stat-warning-bg">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Pendentes</h4>
+                        <p id="statPendentes">-</p>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-icon stat-danger-bg">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Atrasadas</h4>
+                        <p id="statAtrasadas">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Editar Perfil -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-edit"></i> Editar Perfil</h2>
+            <button class="modal-close" onclick="closeEditModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="editForm" onsubmit="saveProfile(event)">
+            <div class="form-group">
+                <label for="editNome">
+                    <i class="fas fa-user"></i> Nome Completo
+                </label>
+                <input type="text" id="editNome" value="{{ usuario.nome }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="editEmail">
+                    <i class="fas fa-envelope"></i> E-mail
+                </label>
+                <input type="email" id="editEmail" value="{{ usuario.email }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-key"></i> Login
+                </label>
+                <input type="text" value="{{ usuario.login }}" disabled>
+                <small>O login não pode ser alterado</small>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast de Notificação -->
+<div id="toast" class="toast"></div>
+
+<script>
+// Carrega estatísticas do usuário
+async function loadStats() {
+    try {
+        const response = await fetch('/api/tarefas');
+        if (response.ok) {
+            const tarefas = await response.json();
+            
+            const total = tarefas.length;
+            const concluidas = tarefas.filter(t => t.status === 'Concluída').length;
+            const pendentes = tarefas.filter(t => t.status === 'Pendente').length;
+            
+            // Calcula atrasadas
+            let atrasadas = 0;
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            
+            tarefas.forEach(t => {
+                if (t.status === 'Pendente') {
+                    const parts = t.prazo.split('/');
+                    const prazo = new Date(parts[2], parts[1] - 1, parts[0]);
+                    if (prazo < hoje) {
+                        atrasadas++;
+                    }
+                }
+            });
+            
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statConcluidas').textContent = concluidas;
+            document.getElementById('statPendentes').textContent = pendentes;
+            document.getElementById('statAtrasadas').textContent = atrasadas;
+        }
+    } catch (error) {
+        console.error('Erro ao carregar estatísticas:', error);
+    }
+}
+
+// Abre modal de edição
+function openEditModal() {
+    document.getElementById('editModal').classList.add('active');
+}
+
+// Fecha modal de edição
+function closeEditModal() {
+    document.getElementById('editModal').classList.remove('active');
+}
+
+// Salva alterações do perfil
+async function saveProfile(event) {
+    event.preventDefault();
+    
+    const nome = document.getElementById('editNome').value;
+    const email = document.getElementById('editEmail').value;
+    
+    try {
+        const response = await fetch('/api/perfil', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, email })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showToast('Perfil atualizado com sucesso!', 'success');
+            closeEditModal();
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showToast(result.erro || 'Erro ao atualizar perfil', 'error');
+        }
+    } catch (error) {
+        showToast('Erro de conexão', 'error');
+        console.error(error);
+    }
+}
+
+// Fecha modal ao clicar fora
+document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEditModal();
+    }
+});
+
+// Atalho ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeEditModal();
+    }
+});
+
+// Carrega estatísticas ao iniciar
+loadStats();
+</script>
+{% endblock %}

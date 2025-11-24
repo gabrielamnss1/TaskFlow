@@ -34,6 +34,7 @@ from utils.arquivo import ler_dados, salvar_dados, ARQUIVO_USUARIOS
 # Em um sistema real, isso seria gerenciado por sessões web ou tokens
 USUARIO_LOGADO = None
 
+
 def _hash_senha(senha):
     """
     Gera o hash criptográfico SHA256 da senha.
@@ -49,7 +50,8 @@ def _hash_senha(senha):
         a senha original a partir do hash. Por isso é seguro armazenar.
     
     EXEMPLO:
-        senha "123" → hash "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+        senha "123" → hash
+        "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
     """
     return hashlib.sha256(senha.encode('utf-8')).hexdigest()
 
@@ -109,11 +111,11 @@ def cadastrar_usuario(nome, email, login, senha):
     
     # 2. Criar o novo usuário
     novo_usuario = {
-        'id': len(usuarios) + 1, # ID simples baseado no tamanho da lista
+        'id': len(usuarios) + 1,  # ID simples baseado no tamanho da lista
         'nome': nome,
         'email': email,
         'login': login,
-        'senha_hash': _hash_senha(senha) # Armazena o hash da senha
+        'senha_hash': _hash_senha(senha)  # Armazena o hash da senha
     }
     
     # 3. Adicionar e salvar

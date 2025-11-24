@@ -64,7 +64,8 @@ def ler_dados(caminho_arquivo):
     
     RETORNO:
         list: Lista de dicionários com os dados (usuários ou tarefas)
-              Retorna [] (lista vazia) se o arquivo não existir ou estiver vazio
+              Retorna [] (lista vazia) se o arquivo não existir ou
+              estiver vazio
     
     TRATAMENTO DE ERROS:
         - FileNotFoundError: Arquivo ainda não foi criado (primeira execução)
@@ -89,7 +90,6 @@ def ler_dados(caminho_arquivo):
     except json.JSONDecodeError:
         # Retorna uma lista vazia se o arquivo estiver corrompido ou vazio
         return []
-
 
 
 def salvar_dados(caminho_arquivo, dados):
