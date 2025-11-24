@@ -29,7 +29,7 @@ IMPORTANTE PARA APRESENTAÇÃO:
 """
 
 import hashlib
-from utils.arquivo import ler_dados, salvar_dados, ARQUIVO_USUARIOS
+from utils.arquivos import ler_dados, salvar_dados, ARQUIVO_USUARIOS
 # Variável global para simular o usuário logado (sessão)
 # Em um sistema real, isso seria gerenciado por sessões web ou tokens
 USUARIO_LOGADO = None
@@ -217,4 +217,3 @@ def get_usuario_por_id(user_id):
         if usuario['id'] == user_id:
             return usuario
     return None
-# Fim do módulo usuarios.py

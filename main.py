@@ -37,10 +37,17 @@ IMPORTANTE PARA APRESENTAÇÃO:
 ================================================================================
 """
 
-import sys
-from usuarios import cadastrar_usuario, autenticar_usuario, logout, get_usuario_logado
-from tarefas import criar_tarefa, listar_tarefas, editar_tarefa, concluir_tarefa, excluir_tarefa
-from relatorios import tarefas_concluidas, tarefas_pendentes, tarefas_atrasadas, exibir_relatorio, exportar_relatorio
+from usuarios import (
+    cadastrar_usuario, autenticar_usuario, logout, get_usuario_logado
+)
+from tarefas import (
+    criar_tarefa, listar_tarefas, editar_tarefa, concluir_tarefa,
+    excluir_tarefa
+)
+from relatorios import (
+    tarefas_concluidas, tarefas_pendentes, tarefas_atrasadas,
+    exibir_relatorio, exportar_relatorio
+)
 
 # Variável global para controle do loop principal
 EXECUTANDO = True

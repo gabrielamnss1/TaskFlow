@@ -33,7 +33,7 @@ IMPORTANTE PARA APRESENTAÇÃO:
 """
 
 from datetime import datetime
-from utils.arquivo import ler_dados, salvar_dados, ARQUIVO_TAREFAS
+from utils.arquivos import ler_dados, salvar_dados, ARQUIVO_TAREFAS
 from usuarios import get_usuario_logado
 
 # Constantes para Status da Tarefa (evita erros de digitação)
