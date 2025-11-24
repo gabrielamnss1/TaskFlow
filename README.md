@@ -496,14 +496,44 @@ Todos os integrantes contribuem para:
 
 ### Próximas Melhorias (Sugestões Futuras)
 
-- Interface gráfica (GUI) usando Tkinter ou PyQt
-- Autenticação com tokens JWT
-- Sincronização em nuvem
-- Notificações de tarefas atrasadas
-- Dashboard com estatísticas avançadas
-- Sistema de permissões por grupo
-- Integração com calendário
-- API REST para integração com outras aplicações
+- Banco de dados SQL (SQLite, PostgreSQL)
+- Sistema de tags para tarefas
+- Filtros avançados
+- Notificações por email
+- Temas personalizáveis (claro/escuro)
+- Compartilhamento de tarefas entre usuários
+- PWA (Progressive Web App)
+
+---
+
+## 🌐 Interface Web
+
+### Características
+- ✨ Design moderno com gradiente roxo elegante
+- 📱 Totalmente responsivo (mobile, tablet, desktop)
+- 🎨 Ícones Font Awesome
+- ⚡ Animações suaves e transições
+- 🔔 Notificações toast em tempo real
+- 📊 Dashboard com estatísticas
+- 📈 Relatórios interativos
+
+### Tecnologias Web
+- **Backend**: Flask (framework web Python)
+- **Frontend**: HTML5, CSS3, JavaScript ES6+
+- **Ícones**: Font Awesome
+- **API**: REST endpoints JSON
+
+### Como Iniciar o Servidor Web
+```bash
+# Instalar dependências
+pip install -r requirements.txt
+
+# Iniciar servidor
+python app.py
+
+# Acessar no navegador
+http://localhost:5000
+```
 
 ---
 

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios - TaskFlow{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-chart-bar"></i> Relatórios</h1>
+    </div>
+
+    <!-- Filtros de Relatório -->
+    <div class="report-filters">
+        <a href="{{ url_for('relatorios', tipo='concluidas') }}" 
+           class="filter-btn {% if tipo == 'concluidas' %}active{% endif %}">
+            <i class="fas fa-check-circle"></i> Concluídas
+        </a>
+        <a href="{{ url_for('relatorios', tipo='pendentes') }}" 
+           class="filter-btn {% if tipo == 'pendentes' %}active{% endif %}">
+            <i class="fas fa-clock"></i> Pendentes
+        </a>
+        <a href="{{ url_for('relatorios', tipo='atrasadas') }}" 
+           class="filter-btn {% if tipo == 'atrasadas' %}active{% endif %}">
+            <i class="fas fa-exclamation-triangle"></i> Atrasadas
+        </a>
+    </div>
+
+    <!-- Título do Relatório -->
+    <div class="report-header">
+        <h2>
+            {% if tipo == 'concluidas' %}
+                <i class="fas fa-check-circle"></i> Tarefas Concluídas
+            {% elif tipo == 'pendentes' %}
+                <i class="fas fa-clock"></i> Tarefas Pendentes
+            {% elif tipo == 'atrasadas' %}
+                <i class="fas fa-exclamation-triangle"></i> Tarefas Atrasadas
+            {% endif %}
+        </h2>
+        <span class="report-count">Total: {{ tarefas|length }} tarefa(s)</span>
+    </div>
+
+    <!-- Lista de Tarefas do Relatório -->
+    {% if tarefas %}
+    <div class="report-table-container">
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Descrição</th>
+                    <th>Prazo</th>
+                    <th>Status</th>
+                    <th>Criada em</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tarefa in tarefas %}
+                <tr class="{% if tarefa.status == 'Concluída' %}row-completed{% elif tarefa.prazo|is_overdue(tarefa.status) %}row-overdue{% endif %}">
+                    <td>{{ tarefa.id }}</td>
+                    <td><strong>{{ tarefa.titulo }}</strong></td>
+                    <td>{{ tarefa.descrição }}</td>
+                    <td>
+                        <span class="deadline">
+                            <i class="fas fa-calendar"></i> {{ tarefa.prazo }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge 
+                            {% if tarefa.status == 'Concluída' %}badge-success
+                            {% elif tarefa.prazo|is_overdue(tarefa.status) %}badge-danger
+                            {% else %}badge-warning{% endif %}">
+                            {% if tarefa.status == 'Concluída' %}
+                                <i class="fas fa-check-circle"></i> Concluída
+                            {% elif tarefa.prazo|is_overdue(tarefa.status) %}
+                                <i class="fas fa-exclamation-triangle"></i> Atrasada
+                            {% else %}
+                                <i class="fas fa-clock"></i> Pendente
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td>{{ tarefa.criacao }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Botão de Exportar -->
+    <div class="report-actions">
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir / Exportar PDF
+        </button>
+        <a href="/api/exportar/{{ tipo }}/json" class="btn btn-success" download>
+            <i class="fas fa-file-code"></i> Exportar JSON
+        </a>
+        <a href="/api/exportar/{{ tipo }}/csv" class="btn btn-info" download>
+            <i class="fas fa-file-csv"></i> Exportar CSV
+        </a>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-chart-bar"></i>
+        <h3>Nenhuma tarefa encontrada</h3>
+        <p>Não há tarefas 
+            {% if tipo == 'concluidas' %}concluídas
+            {% elif tipo == 'pendentes' %}pendentes
+            {% elif tipo == 'atrasadas' %}atrasadas
+            {% endif %} no momento.
+        </p>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
