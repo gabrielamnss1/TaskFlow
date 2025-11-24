@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - TaskFlow{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-home"></i> Bem-vindo, {{ session.user_nome }}!</h1>
+        <button class="btn btn-primary" onclick="openTaskModal()">
+            <i class="fas fa-plus"></i> Nova Tarefa
+        </button>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="stats-grid">
+        <div class="stat-card stat-total">
+            <div class="stat-icon">
+                <i class="fas fa-list"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.total }}</h3>
+                <p>Total de Tarefas</p>
+            </div>
+        </div>
+
+        <div class="stat-card stat-concluidas">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.concluidas }}</h3>
+                <p>Concluídas</p>
+            </div>
+        </div>
+
+        <div class="stat-card stat-pendentes">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.pendentes }}</h3>
+                <p>Pendentes</p>
+            </div>
+        </div>
+
+        <div class="stat-card stat-atrasadas">
+            <div class="stat-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.atrasadas }}</h3>
+                <p>Atrasadas</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Tarefas -->
+    <div class="tasks-section">
+        <div class="tasks-header">
+            <h2><i class="fas fa-tasks"></i> Minhas Tarefas</h2>
+            
+            <!-- Filtros e Busca -->
+            <div class="tasks-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar tarefas..." onkeyup="filterTasks()">
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">
+                        <i class="fas fa-list"></i> Todas
+                    </button>
+                    <button class="filter-btn" data-filter="pendente" onclick="setFilter('pendente')">
+                        <i class="fas fa-clock"></i> Pendentes
+                    </button>
+                    <button class="filter-btn" data-filter="concluida" onclick="setFilter('concluida')">
+                        <i class="fas fa-check-circle"></i> Concluídas
+                    </button>
+                    <button class="filter-btn" data-filter="atrasada" onclick="setFilter('atrasada')">
+                        <i class="fas fa-exclamation-triangle"></i> Atrasadas
+                    </button>
+                </div>
+                
+                <div class="sort-box">
+                    <select id="sortSelect" onchange="sortTasks()" class="sort-select">
+                        <option value="criacao-desc">Mais Recentes</option>
+                        <option value="criacao-asc">Mais Antigas</option>
+                        <option value="prazo-asc">Prazo: Mais Próximo</option>
+                        <option value="prazo-desc">Prazo: Mais Distante</option>
+                        <option value="titulo-asc">Título: A-Z</option>
+                        <option value="titulo-desc">Título: Z-A</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        {% if tarefas %}
+        <div class="tasks-grid">
+            {% for tarefa in tarefas %}
+            <div class="task-card {% if tarefa.status == 'Concluída' %}task-completed{% elif tarefa.prazo|is_overdue(tarefa.status) %}task-overdue{% endif %}" 
+                 data-status="{% if tarefa.status == 'Concluída' %}concluida{% elif tarefa.prazo|is_overdue(tarefa.status) %}atrasada{% else %}pendente{% endif %}"
+                 data-titulo="{{ tarefa.titulo|lower }}"
+                 data-prazo="{{ tarefa.prazo }}"
+                 data-criacao="{{ tarefa.criacao }}">
+                <div class="task-header">
+                    <h3>{{ tarefa.titulo }}</h3>
+                    <span class="task-status {% if tarefa.status == 'Concluída' %}status-completed{% elif tarefa.prazo|is_overdue(tarefa.status) %}status-overdue{% else %}status-pending{% endif %}">
+                        {% if tarefa.status == 'Concluída' %}
+                            <i class="fas fa-check-circle"></i> Concluída
+                        {% elif tarefa.prazo|is_overdue(tarefa.status) %}
+                            <i class="fas fa-exclamation-triangle"></i> Atrasada
+                        {% else %}
+                            <i class="fas fa-clock"></i> Pendente
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <p class="task-description">{{ tarefa.descrição }}</p>
+                
+                <div class="task-meta">
+                    <span class="task-deadline">
+                        <i class="fas fa-calendar"></i> {{ tarefa.prazo }}
+                    </span>
+                    <span class="task-created">
+                        <i class="fas fa-clock"></i> Criada em: {{ tarefa.criacao }}
+                    </span>
+                </div>
+
+                <div class="task-actions">
+                    <button class="btn btn-sm btn-info" onclick="viewTaskDetails({{ tarefa.id }}, '{{ tarefa.titulo }}', '{{ tarefa.descrição }}', '{{ tarefa.prazo }}', '{{ tarefa.criacao }}', '{{ tarefa.status }}')">
+                        <i class="fas fa-eye"></i> Ver
+                    </button>
+                    {% if tarefa.status != 'Concluída' %}
+                    <button class="btn btn-sm btn-success" onclick="completeTask({{ tarefa.id }})">
+                        <i class="fas fa-check"></i> Concluir
+                    </button>
+                    <button class="btn btn-sm btn-secondary" onclick="editTask({{ tarefa.id }}, '{{ tarefa.titulo }}', '{{ tarefa.descrição }}', '{{ tarefa.prazo }}')">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    {% endif %}
+                    <button class="btn btn-sm btn-danger" onclick="confirmDelete({{ tarefa.id }}, '{{ tarefa.titulo }}')">
+                        <i class="fas fa-trash"></i> Excluir
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>Nenhuma tarefa ainda</h3>
+            <p>Comece criando sua primeira tarefa!</p>
+            <button class="btn btn-primary" onclick="openTaskModal()">
+                <i class="fas fa-plus"></i> Criar Primeira Tarefa
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de Visualizar Detalhes -->
+<div id="detailsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="detailsTitle"><i class="fas fa-eye"></i> Detalhes da Tarefa</h2>
+            <button class="modal-close" onclick="closeDetailsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-row">
+                <strong><i class="fas fa-heading"></i> Título:</strong>
+                <p id="detailTitulo"></p>
+            </div>
+            <div class="detail-row">
+                <strong><i class="fas fa-align-left"></i> Descrição:</strong>
+                <p id="detailDescricao"></p>
+            </div>
+            <div class="detail-row">
+                <strong><i class="fas fa-calendar"></i> Prazo:</strong>
+                <p id="detailPrazo"></p>
+            </div>
+            <div class="detail-row">
+                <strong><i class="fas fa-clock"></i> Criada em:</strong>
+                <p id="detailCriacao"></p>
+            </div>
+            <div class="detail-row">
+                <strong><i class="fas fa-info-circle"></i> Status:</strong>
+                <p id="detailStatus"></p>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeDetailsModal()">
+                <i class="fas fa-times"></i> Fechar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content modal-confirm">
+        <div class="modal-header">
+            <h2><i class="fas fa-exclamation-triangle"></i> Confirmar Exclusão</h2>
+            <button class="modal-close" onclick="closeConfirmModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Tem certeza que deseja excluir a tarefa:</p>
+            <p class="confirm-task-title" id="confirmTaskTitle"></p>
+            <p class="confirm-warning"><i class="fas fa-info-circle"></i> Esta ação não pode ser desfeita.</p>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeConfirmModal()">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button type="button" class="btn btn-danger" onclick="executeDelete()">
+                <i class="fas fa-trash"></i> Sim, Excluir
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Criar/Editar Tarefa -->
+<div id="taskModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle"><i class="fas fa-plus"></i> Nova Tarefa</h2>
+            <button class="modal-close" onclick="closeTaskModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="taskForm" onsubmit="saveTask(event)">
+            <input type="hidden" id="taskId" value="">
+            
+            <div class="form-group">
+                <label for="taskTitulo">
+                    <i class="fas fa-heading"></i> Título
+                </label>
+                <input type="text" id="taskTitulo" required placeholder="Digite o título da tarefa">
+            </div>
+
+            <div class="form-group">
+                <label for="taskDescricao">
+                    <i class="fas fa-align-left"></i> Descrição
+                </label>
+                <textarea id="taskDescricao" rows="4" required placeholder="Descreva os detalhes da tarefa"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="taskPrazo">
+                    <i class="fas fa-calendar"></i> Prazo
+                </label>
+                <input type="text" id="taskPrazo" required placeholder="DD/MM/AAAA" pattern="\d{2}/\d{2}/\d{4}">
+                <small>Formato: DD/MM/AAAA</small>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeTaskModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast de Notificação -->
+<div id="toast" class="toast"></div>
+{% endblock %}
