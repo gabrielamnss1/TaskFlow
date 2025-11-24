@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Gerenciador de Tarefas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Tela de Login/Cadastro -->
+    <div id="authScreen" class="auth-screen">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <i class="fas fa-tasks auth-icon"></i>
+                    <h1>TaskFlow</h1>
+                    <p>Gerenciador de Tarefas</p>
+                </div>
+
+                <!-- Login -->
+                <div id="loginForm" class="auth-form-container">
+                    <form onsubmit="handleLogin(event)" class="auth-form">
+                        <div class="form-group">
+                            <label for="loginUser">
+                                <i class="fas fa-user"></i> Login
+                            </label>
+                            <input type="text" id="loginUser" required placeholder="Digite seu login" autofocus>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPass">
+                                <i class="fas fa-lock"></i> Senha
+                            </label>
+                            <input type="password" id="loginPass" required placeholder="Digite sua senha">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-sign-in-alt"></i> Entrar
+                        </button>
+                    </form>
+
+                    <div class="auth-footer">
+                        <p>Não tem uma conta? <a href="#" onclick="showRegister()">Cadastre-se aqui</a></p>
+                    </div>
+                </div>
+
+                <!-- Cadastro -->
+                <div id="registerForm" class="auth-form-container" style="display: none;">
+                    <form onsubmit="handleRegister(event)" class="auth-form">
+                        <div class="form-group">
+                            <label for="regName">
+                                <i class="fas fa-id-card"></i> Nome Completo
+                            </label>
+                            <input type="text" id="regName" required placeholder="Digite seu nome completo">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regEmail">
+                                <i class="fas fa-envelope"></i> E-mail
+                            </label>
+                            <input type="email" id="regEmail" required placeholder="seu@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regUser">
+                                <i class="fas fa-user"></i> Login
+                            </label>
+                            <input type="text" id="regUser" required placeholder="Escolha um login único">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regPass">
+                                <i class="fas fa-lock"></i> Senha
+                            </label>
+                            <input type="password" id="regPass" required placeholder="Escolha uma senha segura">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-user-plus"></i> Cadastrar
+                        </button>
+                    </form>
+
+                    <div class="auth-footer">
+                        <p>Já tem uma conta? <a href="#" onclick="showLogin()">Faça login aqui</a></p>
+                    </div>
+                </div>
+
+                <div id="authAlert" class="alert" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aplicação Principal -->
+    <div id="appScreen" style="display: none;">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <i class="fas fa-tasks"></i>
+                    <span>TaskFlow</span>
+                </div>
+                <div class="nav-menu">
+                    <a href="#" onclick="showDashboard()" class="nav-link active" id="navDashboard">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="#" onclick="showReports()" class="nav-link" id="navReports">
+                        <i class="fas fa-chart-bar"></i> Relatórios
+                    </a>
+                    <div class="nav-user">
+                        <i class="fas fa-user-circle"></i>
+                        <a href="#" onclick="showProfile()" class="nav-link-user" id="userName"></a>
+                        <a href="#" onclick="logout()" class="btn-logout">
+                            <i class="fas fa-sign-out-alt"></i> Sair
+                        </a>
+                    </div>
+                </div>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Dashboard -->
+            <div id="dashboardScreen" class="screen-content"></div>
+
+            <!-- Relatórios -->
+            <div id="reportsScreen" class="screen-content" style="display: none;"></div>
+
+            <!-- Perfil -->
+            <div id="profileScreen" class="screen-content" style="display: none;"></div>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2025 TaskFlow - Desenvolvido com <i class="fas fa-heart"></i></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modais -->
+    <div id="taskModal" class="modal"></div>
+    <div id="detailsModal" class="modal"></div>
+    <div id="confirmModal" class="modal"></div>
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
