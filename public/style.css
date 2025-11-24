@@ -871,14 +871,42 @@ body {
 /* Footer */
 .footer {
     background: var(--surface);
-    padding: 20px 0;
+    padding: 24px 0;
     text-align: center;
     color: var(--text-secondary);
     box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+    margin-top: auto;
+}
+
+.footer .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.5;
 }
 
 .footer i {
     color: var(--danger-color);
+    margin-left: 4px;
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    10%, 30% {
+        transform: scale(1.1);
+    }
+    20%, 40% {
+        transform: scale(1);
+    }
 }
 
 /* Animations */
@@ -1034,6 +1062,11 @@ body {
         right: 20px;
         bottom: 20px;
     }
+
+    .footer p {
+        font-size: 13px;
+        padding: 0 15px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1080,5 +1113,10 @@ body {
 
     .task-actions .btn-sm {
         padding: 12px;
+    }
+
+    .footer p {
+        font-size: 12px;
+        line-height: 1.6;
     }
 }
