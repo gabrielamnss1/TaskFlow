@@ -506,24 +506,52 @@ Todos os integrantes contribuem para:
 
 ---
 
-## 🌐 Interface Web
+## 🌐 Versão Web
 
-### Características
-- ✨ Design moderno com gradiente roxo elegante
-- 📱 Totalmente responsivo (mobile, tablet, desktop)
-- 🎨 Ícones Font Awesome
-- ⚡ Animações suaves e transições
-- 🔔 Notificações toast em tempo real
-- 📊 Dashboard com estatísticas
-- 📈 Relatórios interativos
+### 🚀 Deploy no Netlify
 
-### Tecnologias Web
-- **Backend**: Flask (framework web Python)
+**O TaskFlow agora está disponível online!**
+
+Acesse: **[https://projetowas.netlify.app](https://projetowas.netlify.app)**
+
+### 📱 Características da Interface Web
+
+- ✨ **Design moderno** com gradiente roxo elegante
+- 📱 **100% responsivo** (mobile, tablet, desktop)
+- 🎨 **Ícones Font Awesome** profissionais
+- ⚡ **Animações suaves** e transições elegantes
+- 🔔 **Notificações toast** em tempo real
+- 📊 **Dashboard interativo** com estatísticas
+- 🔍 **Filtros e busca** por título/descrição
+- 📈 **Relatórios completos** com exportação
+- 💾 **LocalStorage** para persistência de dados
+- 🎯 **Ordenação flexível** (data, prazo, título)
+- 👤 **Perfil do usuário** com estatísticas
+
+### 🛠️ Tecnologias Utilizadas
+
 - **Frontend**: HTML5, CSS3, JavaScript ES6+
-- **Ícones**: Font Awesome
-- **API**: REST endpoints JSON
+- **Ícones**: Font Awesome 6.4.0
+- **Persistência**: LocalStorage (navegador)
+- **Deploy**: Netlify
+- **Design**: Mobile-first responsivo
 
-### Como Iniciar o Servidor Web
+### 📦 Versões Disponíveis
+
+#### 1. **Versão Web (Online)** - RECOMENDADA ✨
+- Acesse direto pelo navegador
+- Sem instalação necessária
+- Disponível 24/7 no Netlify
+- Interface moderna e profissional
+- Funciona em qualquer dispositivo
+
+#### 2. **Versão CLI (Terminal)**
+```bash
+# Executar localmente
+python main.py
+```
+
+#### 3. **Versão Flask (Servidor Local)**
 ```bash
 # Instalar dependências
 pip install -r requirements.txt
@@ -531,9 +559,20 @@ pip install -r requirements.txt
 # Iniciar servidor
 python app.py
 
-# Acessar no navegador
-http://localhost:5000
+# Acessar: http://localhost:5000
 ```
+
+### 🎯 Como Usar a Versão Web
+
+1. **Acesse**: [https://projetowas.netlify.app](https://projetowas.netlify.app)
+2. **Cadastre-se**: Crie sua conta gratuitamente
+3. **Faça login**: Entre com suas credenciais
+4. **Crie tarefas**: Adicione, edite e gerencie suas atividades
+5. **Acompanhe**: Veja estatísticas e relatórios em tempo real
+
+### 📖 Documentação de Deploy
+
+Para fazer seu próprio deploy, consulte: **[DEPLOY_NETLIFY.md](DEPLOY_NETLIFY.md)**
 
 ---
 

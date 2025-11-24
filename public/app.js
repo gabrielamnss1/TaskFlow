@@ -374,19 +374,19 @@ function renderTasks() {
                     ${task.deadline ? `<span><i class="fas fa-clock"></i> ${formatDate(task.deadline)}</span>` : ''}
                 </div>
                 <div class="task-actions">
-                    <button onclick="viewTaskDetails(${task.id})" class="btn btn-sm btn-info">
-                        <i class="fas fa-eye"></i> Detalhes
+                    <button onclick="viewTaskDetails(${task.id})" class="btn btn-sm btn-info" title="Ver detalhes completos">
+                        <i class="fas fa-eye"></i><span class="btn-text">Detalhes</span>
                     </button>
                     ${!task.completed ? `
-                        <button onclick="editTask(${task.id})" class="btn btn-sm btn-warning">
-                            <i class="fas fa-edit"></i> Editar
+                        <button onclick="editTask(${task.id})" class="btn btn-sm btn-warning" title="Editar tarefa">
+                            <i class="fas fa-edit"></i><span class="btn-text">Editar</span>
                         </button>
-                        <button onclick="completeTask(${task.id})" class="btn btn-sm btn-success">
-                            <i class="fas fa-check"></i> Concluir
+                        <button onclick="completeTask(${task.id})" class="btn btn-sm btn-success" title="Marcar como concluída">
+                            <i class="fas fa-check"></i><span class="btn-text">Concluir</span>
                         </button>
                     ` : ''}
-                    <button onclick="confirmDelete(${task.id})" class="btn btn-sm btn-danger">
-                        <i class="fas fa-trash"></i> Excluir
+                    <button onclick="confirmDelete(${task.id})" class="btn btn-sm btn-danger" title="Excluir tarefa">
+                        <i class="fas fa-trash"></i><span class="btn-text">Excluir</span>
                     </button>
                 </div>
             </div>
